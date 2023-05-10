@@ -10,6 +10,7 @@ const TodoItem: React.FC<TodoItemProps> = (props) => {
   const deleteTodo = () => {
     props.onCheck(props.id);
   };
+  
   return (
     // <div className="todo" onClick={deleteTodo}>
     //   <input type="checkbox" />
