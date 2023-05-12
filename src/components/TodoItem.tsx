@@ -1,5 +1,7 @@
 import { useDispatch } from 'react-redux';
-import {toggleComplete, removeTodo} from '../store/todoSlice';
+import { toggleComplete, removeTodosThunk } from '../store/todoSlice';
+import React from 'react';
+import { Dispatch } from 'redux';
 
 interface TodoItemProps {
   defaultTitle: string;
@@ -8,16 +10,15 @@ interface TodoItemProps {
   completed: boolean;
 }
 
-
 const TodoItem: React.FC<TodoItemProps> = ({ id, title, completed }) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<Dispatch<any>>();
 
   const handleToggleComplete = (): void => {
-    dispatch(toggleComplete({ id: id.toString() }));
+    dispatch<any>(toggleComplete({id}));
   };
 
   const handleRemoveTodo = (): void => {
-    dispatch(removeTodo({ id: id.toString() }));
+    dispatch<any>(removeTodosThunk(id));
   };
 
   return (
@@ -28,7 +29,7 @@ const TodoItem: React.FC<TodoItemProps> = ({ id, title, completed }) => {
         onChange={handleToggleComplete}
       />
       <span>{title}</span>
-      <span onClick={handleRemoveTodo}>&times;</span>
+      <button onClick={handleRemoveTodo}>&times;</button>
     </li>
   );
 };

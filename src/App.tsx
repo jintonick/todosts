@@ -3,20 +3,25 @@ import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { AsyncThunkAction } from '@reduxjs/toolkit';
 import { ThunkAction } from 'redux-thunk';
-
-import { addTodo, fetchTodos } from './store/todoSlice';
+import { addTodosThunk, fetchTodos, TodoReqest } from './store/todoSlice';
 import NewTodoForm from './components/NewTodoForm';
 import TodoList from './components/TodoList';
+import { useAppDispatch } from './store/Index';
+
 
 import './App.css';
 
 const App: React.FC = (): JSX.Element => {
   const [text, setText] = useState<string>('');
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const handleAction = (): void => {
     if (text.trim().length) {
-      dispatch(addTodo({ text }));
+      dispatch(addTodosThunk({
+        title: text, 
+        completed: false,
+        userId: 1
+      }))
       setText('');
     }
   };

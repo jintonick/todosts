@@ -1,9 +1,11 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
+import  axios  from 'axios';
 
 interface Todo {
-    id: string;
-    text: string;
-    completed: boolean;
+    userId: number,
+    id: number,
+    title: string,
+    completed: boolean
 }
 
 interface TodoState {
@@ -12,14 +14,38 @@ interface TodoState {
     error: string | null;
 }
 
+export interface TodoReqest {
+    userId: number,
+    title: string,
+    completed: boolean
+}
+
 export const fetchTodos = createAsyncThunk(
     'todo/fetchTodos',
     async function() {
-        const response = await fetch('https://jsonplaceholder.typicode.com/todos?_limit=10')
-        const data = await response.json();
+        const response = await axios.get('http://localhost:3004/todos')
+        const data = await response.data;
         return data;
     }
 )
+
+export const removeTodosThunk = createAsyncThunk<Todo[], number>(
+    'todo/fetchTodos',
+    async function(id) {
+        const {data} = await axios.delete('http://localhost:3004/todos/' + id.toString())
+        return data;
+    }
+)
+
+export const addTodosThunk = createAsyncThunk<Todo, TodoReqest>(
+    'todo/addTODO',
+    async function(body) {
+        const response = await axios.post('http://localhost:3004/todos/', body);
+        const { data } = response;
+        return data;
+    }
+)
+
 
 const todoSlice = createSlice({
     name: 'todos',
@@ -29,20 +55,16 @@ const todoSlice = createSlice({
         error: null,
     } as TodoState,
     reducers: {
-        addTodo: (state, action: PayloadAction<{text: string}>) => {
-            state.todos.push({
-              id: new Date().toISOString(),
-              text: action.payload.text,
-              completed: false,
-            });
+        addTodo: (state, {payload}: { payload: Todo }) => {
+            state.todos.push(payload);
         },
-        toggleComplete: (state, action: PayloadAction<{id: string}>) => {
+        toggleComplete: (state, action: PayloadAction<{id: number}>) => {
             const toggledTodo = state.todos.find(todo => todo.id === action.payload.id);
             if (toggledTodo) {
                 toggledTodo.completed = !toggledTodo.completed;
             }
         },
-        removeTodo: (state, action: PayloadAction<{id: string}>) => {
+        removeTodo: (state, action: PayloadAction<{id: number}>) => {
             state.todos = state.todos.filter(todo => todo.id !== action.payload.id);
         }
     },
@@ -55,6 +77,10 @@ const todoSlice = createSlice({
             state.status = 'resolved';
             state.todos = action.payload;
         })
+        .addCase(addTodosThunk.fulfilled, (state, { payload } : { payload: Todo }) => {
+            console.log(payload);
+            state.todos.push(payload);
+          })
         .addCase(fetchTodos.rejected, (state, action) => {
             state.status = 'rejected';
         });
