@@ -18,7 +18,7 @@ const TodoItem: React.FC<TodoItemProps> = ({ id, title, completed }) => {
   };
 
   const handleRemoveTodo = (): void => {
-    dispatch<any>(removeTodosThunk(id));
+    dispatch<any>(removeTodosThunk(id)).unwrap();
   };
 
   return (

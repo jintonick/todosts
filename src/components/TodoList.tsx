@@ -5,9 +5,11 @@ import React from 'react';
 const TodoList: React.FC = () => {
     const todos = useSelector((state: RootState) => state.todos.todos);
 
+    console.log ("todos", todos)
+
     return (
         <ul>
-            {todos.map((todo) => (
+            {todos?.map((todo) => (
                 <TodoItem defaultTitle={''} key={todo.id} {...todo} />
             ))}
         </ul>
