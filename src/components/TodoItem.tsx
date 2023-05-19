@@ -18,7 +18,13 @@ const TodoItem: React.FC<TodoItemProps> = ({ id, title, completed }) => {
   };
 
   const handleRemoveTodo = (): void => {
-    dispatch<any>(removeTodosThunk(id)).unwrap();
+    dispatch<any>(removeTodosThunk(id))
+      .then(() => console.log("Successfully removed"))
+      .catch((error: { message: string | string[]; }) => {
+        if (!error.message.includes('A non-serializable value was detected in an action')) {
+          console.error("Failed to remove", error);
+        }
+      });
   };
 
   return (

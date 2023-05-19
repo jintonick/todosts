@@ -29,13 +29,13 @@ export const fetchTodos = createAsyncThunk(
     }
 )
 
-export const removeTodosThunk = createAsyncThunk<Todo, number>(
+export const removeTodosThunk = createAsyncThunk<number, number>(
     'todo/removeTodos',
     async function(id) {
-        const {data} = await axios.delete('http://localhost:3004/todos/' + id.toString())
-        return {...data, payload : {id}};
+        await axios.delete(`http://localhost:3004/todos/${id}`);
+        return id;
     }
-)
+);
 
 export const addTodosThunk = createAsyncThunk<Todo, TodoReqest>(
     'todo/addTODO',
@@ -74,9 +74,8 @@ const todoSlice = createSlice({
             state.status = 'resolved';
             state.todos = action.payload;
         })
-        .addCase(removeTodosThunk.fulfilled, (state, action) => {
-            console.log(action.payload)
-            state.todos = [...state.todos.filter((todo) => todo.id !== action.payload.id)]
+        .addCase(removeTodosThunk.fulfilled, (state, action: PayloadAction<number>) => {
+            state.todos = state.todos.filter((todo) => todo.id !== action.payload);
         })
         .addCase(addTodosThunk.fulfilled, (state, { payload } : { payload: Todo }) => {
             console.log(payload);
