@@ -1,31 +1,19 @@
-import { useSelector } from 'react-redux';
-import TodoItem from './TodoItem';
 import React from 'react';
+import TodoItem from './TodoItem';
+import { useFetchTodosQuery } from '../store/todoApi';
 
 const TodoList: React.FC = () => {
-    const todos = useSelector((state: RootState) => state.todos.todos);
+    const { data: todos = [], isFetching } = useFetchTodosQuery();
 
-    console.log ("todos", todos)
+    if (isFetching) return <div>Loading...</div>;
 
     return (
         <ul>
             {todos?.map((todo) => (
-                <TodoItem defaultTitle={''} key={todo.id} {...todo} />
+                <TodoItem key={todo.id} {...todo} />
             ))}
         </ul>
     );
 };
 
 export default TodoList;
-
-interface RootState {
-    todos: {
-        todos: Todo[];
-    };
-}
-
-export interface Todo {
-    id: number;
-    title: string;
-    completed: boolean;
-}
